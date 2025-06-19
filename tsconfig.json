@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "strict": true,
+    "types": ["vite/client"], // 👈 ESSENCIAL
+    "esModuleInterop": true,
+  },
+  "include": ["src", "vite-env.d.ts"]
+}
