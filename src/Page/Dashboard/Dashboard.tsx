@@ -62,23 +62,33 @@ const Dashboard = () => {
     setPage(1)
   }
 
+  // Função para formatar telefone para WhatsApp
+  function formatarTelefone(telefone: string) {
+    const numeros = telefone.replace(/\D/g, '')
+    return numeros.startsWith('55') ? numeros : '55' + numeros
+  }
+
   return (
     <>
       {/* Navbar */}
       <nav className="bg-white shadow-md">
-        <ul className="flex items-center justify-between px-6 py-4">
-          <li className="flex items-center">
-            <img src={Logo} alt="Logo" className="h-10 w-auto mr-3" />
-            <span className="text-xl font-semibold">4s Seguro - Admin</span>
+        <ul className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 space-y-2 sm:space-y-0">
+          <li className="flex items-center space-x-3">
+            <img src={Logo} alt="Logo" className="h-10 w-auto" />
+            <span className="text-xl font-semibold whitespace-nowrap">4s Seguro - Admin</span>
           </li>
           <li className="flex items-center space-x-4">
             {isAuthenticated ? (
-              <>
-
-                <button onClick={logOut} className="text-gray-700 hover:text-red-500">Sair</button>
-              </>
+              <button
+                onClick={logOut}
+                className="text-gray-700 hover:text-red-500 font-semibold"
+              >
+                Sair
+              </button>
             ) : (
-              <Link to="/login" className="text-gray-700 hover:text-blue-500">Login</Link>
+              <Link to="/login" className="text-gray-700 hover:text-blue-500 font-semibold">
+                Login
+              </Link>
             )}
           </li>
         </ul>
@@ -94,7 +104,7 @@ const Dashboard = () => {
           value={search}
           onChange={handleSearchChange}
           placeholder="Buscar por nome, telefone ou cidade..."
-          className="mb-6 w-full max-w-md p-2 border border-gray-300 rounded-md"
+          className="mb-6 w-full max-w-xs sm:max-w-md p-2 border border-gray-300 rounded-md"
         />
 
         {loading ? (
@@ -103,48 +113,54 @@ const Dashboard = () => {
           <p className="text-red-500">{error}</p>
         ) : (
           <>
-            <table className="min-w-full bg-white border border-gray-200">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3 border-b">Nome</th>
-                  <th className="px-6 py-3 border-b">Telefone</th>
-                  <th className="px-6 py-3 border-b">Tipo de Acidente</th>
-                  <th className="px-6 py-3 border-b">Cidade</th>
-                  <th className="px-6 py-3 border-b">Data do Acidente</th>
-                  <th className="px-6 py-3 border-b">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-              {paginatedLeads.map((lead) => {
-  function formatarTelefone(telefone: string) {
-    const numeros = telefone.replace(/\D/g, '');
-    return numeros.startsWith('55') ? numeros : '55' + numeros;
-  }
+            {/* Tabela com scroll horizontal */}
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white border border-gray-200">
+                <thead>
+                  <tr>
+                    <th className="px-2 py-1 sm:px-6 sm:py-3 border-b text-sm sm:text-base text-left">Nome</th>
+                    <th className="px-2 py-1 sm:px-6 sm:py-3 border-b text-sm sm:text-base text-left">Telefone</th>
+                    <th className="px-2 py-1 sm:px-6 sm:py-3 border-b text-sm sm:text-base text-left">Tipo de Acidente</th>
+                    <th className="px-2 py-1 sm:px-6 sm:py-3 border-b text-sm sm:text-base text-left">Cidade</th>
+                    <th className="px-2 py-1 sm:px-6 sm:py-3 border-b text-sm sm:text-base text-left">Data do Acidente</th>
+                    <th className="px-2 py-1 sm:px-6 sm:py-3 border-b text-sm sm:text-base text-left">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedLeads.map((lead) => {
+                    const telefoneFormatado = formatarTelefone(lead.telefone)
+                    const mensagem = encodeURIComponent(`Olá ${lead.nome}, recebemos seu contato e logo entraremos em contato!`)
+           
+                    const whatsappLink = `https://wa.me/${telefoneFormatado}?text=${mensagem}`
 
-  const telefoneFormatado = formatarTelefone(lead.telefone);
-  const mensagem = encodeURIComponent(`Olá ${lead.nome}, recebemos seu contato e logo entraremos em contato!`);
-  const whatsappLink = `https://wa.me/${telefoneFormatado}?text=${mensagem}`;
-
-  return (
-    <tr key={lead.id}>
-      <td>{lead.nome}</td>
-      <td>{lead.telefone}</td>
-      <td>{lead.tipoAcidente}</td>
-      <td>{lead.cidade}</td>
-      <td>{new Date(lead.dataAcidente).toLocaleDateString()}</td>
-      <td>
-        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-800">
-          Enviar WhatsApp
-        </a>
-      </td>
-    </tr>
-  );
-})}
-              </tbody>
-            </table>
+                    return (
+                      <tr key={lead.id} className="hover:bg-gray-50">
+                        <td className="px-2 py-1 sm:px-6 sm:py-4 border-b text-sm sm:text-base">{lead.nome}</td>
+                        <td className="px-2 py-1 sm:px-6 sm:py-4 border-b text-sm sm:text-base">{lead.telefone}</td>
+                        <td className="px-2 py-1 sm:px-6 sm:py-4 border-b text-sm sm:text-base">{lead.tipoAcidente}</td>
+                        <td className="px-2 py-1 sm:px-6 sm:py-4 border-b text-sm sm:text-base">{lead.cidade}</td>
+                        <td className="px-2 py-1 sm:px-6 sm:py-4 border-b text-sm sm:text-base">
+                          {new Date(lead.dataAcidente).toLocaleDateString()}
+                        </td>
+                        <td className="px-2 py-1 sm:px-6 sm:py-4 border-b text-sm sm:text-base">
+                          <a
+                            href={whatsappLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-green-600 hover:text-green-800 font-semibold"
+                          >
+                            Enviar WhatsApp
+                          </a>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
 
             {/* Paginação */}
-            <div className="flex justify-center mt-6 space-x-2">
+            <div className="flex flex-col sm:flex-row justify-center mt-6 space-y-2 sm:space-y-0 sm:space-x-2">
               <button
                 onClick={() => setPage(1)}
                 disabled={page === 1}
@@ -159,7 +175,9 @@ const Dashboard = () => {
               >
                 ◀ Voltar
               </button>
-              <span className="px-4 py-1 text-sm">Página {page} de {totalPages}</span>
+              <span className="px-4 py-1 text-sm text-center">
+                Página {page} de {totalPages}
+              </span>
               <button
                 onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
                 disabled={page === totalPages}
