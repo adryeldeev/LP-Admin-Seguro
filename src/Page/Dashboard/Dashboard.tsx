@@ -115,16 +115,31 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedLeads.map((lead) => (
-                  <tr key={lead.id}>
-                    <td className="px-6 py-4 border-b">{lead.nome}</td>
-                    <td className="px-6 py-4 border-b">{lead.telefone}</td>
-                    <td className="px-6 py-4 border-b">{lead.tipoAcidente}</td>
-                    <td className="px-6 py-4 border-b">{lead.cidade}</td>
-                    <td className="px-6 py-4 border-b">{new Date(lead.dataAcidente).toLocaleDateString()}</td>
-                  
-                  </tr>
-                ))}
+              {paginatedLeads.map((lead) => {
+  function formatarTelefone(telefone: string) {
+    const numeros = telefone.replace(/\D/g, '');
+    return numeros.startsWith('55') ? numeros : '55' + numeros;
+  }
+
+  const telefoneFormatado = formatarTelefone(lead.telefone);
+  const mensagem = encodeURIComponent(`Olá ${lead.nome}, recebemos seu contato e logo entraremos em contato!`);
+  const whatsappLink = `https://wa.me/${telefoneFormatado}?text=${mensagem}`;
+
+  return (
+    <tr key={lead.id}>
+      <td>{lead.nome}</td>
+      <td>{lead.telefone}</td>
+      <td>{lead.tipoAcidente}</td>
+      <td>{lead.cidade}</td>
+      <td>{new Date(lead.dataAcidente).toLocaleDateString()}</td>
+      <td>
+        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-800">
+          Enviar WhatsApp
+        </a>
+      </td>
+    </tr>
+  );
+})}
               </tbody>
             </table>
 
