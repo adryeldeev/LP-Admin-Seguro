@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/api/api.ts","./src/context/authprovider.tsx","./src/page/cadastrouser/cadastrouser.tsx","./src/page/dashboard/dashboard.tsx","./src/page/login/login.tsx","./src/routes/routesprivate.tsx"],"errors":true,"version":"5.8.3"}

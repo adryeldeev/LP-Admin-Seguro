@@ -1,21 +1,41 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import axios, { AxiosError } from 'axios';
+import { jwtDecode, JwtPayload } from "jwt-decode";
+import { ReactNode } from 'react';
 
-const AuthContext = createContext(undefined);
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
-const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("site") || "");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+interface Credentials {
+  email: string;
+  password: string;
+}
+
+interface AuthContextType {
+  user: JwtPayload | null;
+  token: string;
+  loginAction: (credentials: Credentials) => Promise<void>;
+  logOut: () => void;
+  error: string;
+  loading: boolean;
+  isAuthenticated: boolean;
+}
+
+// TIPAGEM aplicada aqui 👇
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [user, setUser] = useState<JwtPayload | null>(null);
+  const [token, setToken] = useState<string>(localStorage.getItem("site") || "");
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
   const isAuthenticated = !!token;
 
   const navigate = useNavigate();
 
-  // Login
-  const loginAction = async (credentials) => {
+  const loginAction = async (credentials: Credentials) => {
     try {
       const response = await axios.post("https://my-project-landig-page-production.up.railway.app/login", credentials);
       const { token } = response.data;
@@ -23,20 +43,20 @@ const AuthProvider = ({ children }) => {
       if (token) {
         localStorage.setItem("site", token);
         setToken(token);
-        const decodedUser = jwtDecode(token);
+        const decodedUser = jwtDecode<JwtPayload>(token);
         setUser(decodedUser);
         setError("");
         navigate("/");
       }
-    } catch (err) {
-      const status = err?.response?.status;
+    } catch (err: unknown) {
+      const error = err as AxiosError;
+      const status = error.response?.status;
       if (status === 401) setError("E-mail ou senha incorretos.");
       else if (status === 404) setError("Usuário não encontrado.");
       else setError("Erro no login. Tente novamente.");
     }
   };
 
-  // Logout
   const logOut = () => {
     localStorage.removeItem("site");
     setUser(null);
@@ -44,12 +64,11 @@ const AuthProvider = ({ children }) => {
     navigate("/login");
   };
 
-  // Verificar se já existe token ao iniciar
   useEffect(() => {
     const storedToken = localStorage.getItem("site");
     if (storedToken) {
       try {
-        const decoded = jwtDecode(storedToken);
+        const decoded = jwtDecode<JwtPayload>(storedToken);
         setUser(decoded);
         setToken(storedToken);
       } catch {
@@ -68,7 +87,8 @@ const AuthProvider = ({ children }) => {
 
 export default AuthProvider;
 
-export const useAuth = () => {
+// Hook personalizado
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
