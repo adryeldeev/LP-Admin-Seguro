@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AxiosError } from 'axios';
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { ReactNode } from 'react';
-import useApi from "../Api/Api";
+import getApi from "../Api/Api";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -32,13 +32,13 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useState<string>(localStorage.getItem("site") || "");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const api = useApi();
   const isAuthenticated = !!token;
-
+  
   const navigate = useNavigate();
-
+  
   const loginAction = async (credentials: Credentials) => {
-
+    const api = getApi();
+    
   try {
     const response = await api.post("/user", credentials);
     const { token } = response.data;

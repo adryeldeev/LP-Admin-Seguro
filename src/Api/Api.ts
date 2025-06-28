@@ -1,10 +1,7 @@
 // src/Api/api.ts
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
-import { useAuth } from "../Context/AuthProvider";
 
-const useApi = (): AxiosInstance => {
-  const { token } = useAuth();
-
+ const getApi = (token?: string): AxiosInstance => {
   const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     headers: {
@@ -22,4 +19,4 @@ const useApi = (): AxiosInstance => {
   return api;
 };
 
-export default useApi;
+export default getApi

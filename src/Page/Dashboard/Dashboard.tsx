@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import useApi from '../../Api/Api'
 import Logo from '../../assets/Logo.png'
 import { useAuth } from '../../Context/AuthProvider'
+import getApi from '../../Api/Api'
 
 interface Lead {
   id: number;
@@ -14,7 +14,7 @@ interface Lead {
 }
 
 const Dashboard = () => {
-  const api = useApi()
+  const api = getApi()
   const { isAuthenticated, logOut } = useAuth()
 
   const [leads, setLeads] = useState<Lead[]>([])
