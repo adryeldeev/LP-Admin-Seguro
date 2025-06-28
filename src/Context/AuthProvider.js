@@ -1,8 +1,9 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
+// TIPAGEM aplicada aqui 👇
 const AuthContext = createContext(undefined);
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -11,7 +12,6 @@ const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const isAuthenticated = !!token;
     const navigate = useNavigate();
-    // Login
     const loginAction = async (credentials) => {
         try {
             const response = await axios.post("https://my-project-landig-page-production.up.railway.app/login", credentials);
@@ -26,7 +26,8 @@ const AuthProvider = ({ children }) => {
             }
         }
         catch (err) {
-            const status = err?.response?.status;
+            const error = err;
+            const status = error.response?.status;
             if (status === 401)
                 setError("E-mail ou senha incorretos.");
             else if (status === 404)
@@ -35,14 +36,12 @@ const AuthProvider = ({ children }) => {
                 setError("Erro no login. Tente novamente.");
         }
     };
-    // Logout
     const logOut = () => {
         localStorage.removeItem("site");
         setUser(null);
         setToken("");
         navigate("/login");
     };
-    // Verificar se já existe token ao iniciar
     useEffect(() => {
         const storedToken = localStorage.getItem("site");
         if (storedToken) {
@@ -60,6 +59,7 @@ const AuthProvider = ({ children }) => {
     return (_jsx(AuthContext.Provider, { value: { user, token, loginAction, logOut, error, loading, isAuthenticated }, children: children }));
 };
 export default AuthProvider;
+// Hook personalizado
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context)
