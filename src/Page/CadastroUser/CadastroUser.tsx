@@ -15,35 +15,34 @@ const CadastroUser = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
-  setLoading(true)
-  setError('')
+ 
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setError("");
 
-  // Validação só no frontend
   if (formData.password !== formData.confirmPassword) {
-    setError('As senhas não coincidem.')
-    setLoading(false)
-    return
+    setError("As senhas não coincidem.");
+    setLoading(false);
+    return;
   }
 
   try {
-    // Envia apenas os dados necessários para o backend
-    const { name, email, password } = formData
-    const response = await api.post('/userCreate', { name, email, password })
+    const { name, email, password } = formData;
+    const response = await api.post("/userCreate", { name, email, password });
 
     if (response.status === 201) {
-      window.location.href = '/login'
+      window.location.href = "/login";
     } else {
-      setError('Erro ao cadastrar usuário. Tente novamente.')
+      setError("Erro ao cadastrar usuário. Tente novamente.");
     }
   } catch (error) {
-    setError('Erro ao cadastrar usuário. Tente novamente.')
-    console.error('Erro no cadastro:', error)
+    setError("Erro ao cadastrar usuário. Tente novamente.");
+    console.error("Erro no cadastro:", error);
   } finally {
-    setLoading(false)
+    setLoading(false);
   }
-}
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

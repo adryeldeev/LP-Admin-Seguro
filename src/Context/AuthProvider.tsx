@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { jwtDecode, JwtPayload } from "jwt-decode";
 import { ReactNode } from 'react';
+import useApi from "../Api/Api";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -31,31 +32,33 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useState<string>(localStorage.getItem("site") || "");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const api = useApi();
   const isAuthenticated = !!token;
 
   const navigate = useNavigate();
 
   const loginAction = async (credentials: Credentials) => {
-    try {
-      const response = await axios.post("https://my-project-landig-page-production.up.railway.app/user", credentials);
-      const { token } = response.data;
 
-      if (token) {
-        localStorage.setItem("site", token);
-        setToken(token);
-        const decodedUser = jwtDecode<JwtPayload>(token);
-        setUser(decodedUser);
-        setError("");
-        navigate("/");
-      }
-    } catch (err: unknown) {
-      const error = err as AxiosError;
-      const status = error.response?.status;
-      if (status === 401) setError("E-mail ou senha incorretos.");
-      else if (status === 404) setError("Usuário não encontrado.");
-      else setError("Erro no login. Tente novamente.");
+  try {
+    const response = await api.post("/user", credentials);
+    const { token } = response.data;
+
+    if (token) {
+      localStorage.setItem("site", token);
+      setToken(token);
+      const decodedUser = jwtDecode<JwtPayload>(token);
+      setUser(decodedUser);
+      setError("");
+      navigate("/");
     }
-  };
+  } catch (err: unknown) {
+    const error = err as AxiosError;
+    const status = error.response?.status;
+    if (status === 401) setError("E-mail ou senha incorretos.");
+    else if (status === 404) setError("Usuário não encontrado.");
+    else setError("Erro no login. Tente novamente.");
+  }
+};
 
   const logOut = () => {
     localStorage.removeItem("site");
