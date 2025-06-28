@@ -17,7 +17,7 @@ const AuthProvider = ({ children }) => {
   // Login
   const loginAction = async (credentials) => {
     try {
-      const response = await axios.post("https://my-first-project-repo-production.up.railway.app/login", credentials);
+      const response = await axios.post("https://my-project-landig-page-production.up.railway.app/login", credentials);
       const { token } = response.data;
 
       if (token) {
