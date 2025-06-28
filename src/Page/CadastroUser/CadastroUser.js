@@ -1,9 +1,9 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import React from 'react';
-import useApi from '../../Api/Api';
 import Logo from '../../assets/Logo.png';
+import getApi from '../../Api/Api';
 const CadastroUser = () => {
-    const api = useApi();
+    const api = getApi();
     const [formData, setFormData] = React.useState({
         name: '',
         email: '',

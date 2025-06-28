@@ -1,11 +1,11 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import useApi from '../../Api/Api';
 import Logo from '../../assets/Logo.png';
 import { useAuth } from '../../Context/AuthProvider';
+import getApi from '../../Api/Api';
 const Dashboard = () => {
-    const api = useApi();
+    const api = getApi();
     const { isAuthenticated, logOut } = useAuth();
     const [leads, setLeads] = useState([]);
     const [loading, setLoading] = useState(true);

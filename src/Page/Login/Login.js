@@ -1,9 +1,9 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import React from 'react';
 import Logo from '../../assets/Logo.png';
-import useApi from '../../Api/Api';
+import getApi from '../../Api/Api';
 const Login = () => {
-    const api = useApi();
+    const api = getApi();
     const [formData, setFormData] = React.useState({
         email: '',
         password: ''

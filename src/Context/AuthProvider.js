@@ -2,7 +2,7 @@ import { jsx as _jsx } from "react/jsx-runtime";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import useApi from "../Api/Api";
+import getApi from "../Api/Api";
 // TIPAGEM aplicada aqui 👇
 const AuthContext = createContext(undefined);
 const AuthProvider = ({ children }) => {
@@ -10,10 +10,10 @@ const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem("site") || "");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
-    const api = useApi();
     const isAuthenticated = !!token;
     const navigate = useNavigate();
     const loginAction = async (credentials) => {
+        const api = getApi();
         try {
             const response = await api.post("/user", credentials);
             const { token } = response.data;

@@ -1,8 +1,6 @@
 // src/Api/api.ts
 import axios from "axios";
-import { useAuth } from "../Context/AuthProvider";
-const useApi = () => {
-    const { token } = useAuth();
+const getApi = (token) => {
     const api = axios.create({
         baseURL: import.meta.env.VITE_API_URL,
         headers: {
@@ -17,4 +15,4 @@ const useApi = () => {
     });
     return api;
 };
-export default useApi;
+export default getApi;
